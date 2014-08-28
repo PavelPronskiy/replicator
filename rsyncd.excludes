@@ -28,4 +28,3 @@
 - /lib/rc/init.d/*
 - /lib64/rc/init.d/*
 - /usr/portage/*
-- /srv/www/vhosts/probirka.org/httpdocs/forum/cache/*

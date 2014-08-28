@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# container 100 probirka forum
+# openvz container
 
 BASEDIR="/opt/replicator"
 

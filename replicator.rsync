@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# container 100 probirka forum
+
+BASEDIR="/opt/replicator"
+
+if [ -d "${BASEDIR}" ]
+then
+	source ${BASEDIR}/settings.conf
+	
+	if [ ! -f "${EXCLUDEFILECONF}" ]
+	then
+		echo "exclude.conf not found!"
+		exit 1
+	fi
+else
+	echo "basedir not found!"
+	exit 1
+fi
+
+#echo "###########################################"
+#echo "# REPLICATOR STARTED AT: $timestamp #"
+#echo "###########################################"
+
+#echo -ne "$0 started at $(date "+%F %H:%m")"
+
+#rsync ${RSYNCOPTS} ${MASTERHOST}::${MASTERRSYNCD}/$getdir /
+
+for getdir in ${MASTERFETCHDIRS[*]}
+do
+	rsync ${RSYNCOPTS} ${MASTERHOST}::${MASTERRSYNCD}/$getdir /
+done 
+
+#echo -e " end $(date "+%F %H:%m") synced: ${cnt}\n"
+
+

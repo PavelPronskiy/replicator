@@ -1,0 +1,2 @@
+*/5 * * * * root /opt/replicator/replicator.rsync
+

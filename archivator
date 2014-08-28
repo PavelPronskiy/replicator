@@ -1,0 +1,44 @@
+#!/bin/bash
+
+BACKIN_DIR="/srv/www/vhosts"
+VE_BACKUP_TMP="/.backup"
+TIMESTAMP=$(date +%F)
+BACKOUT_DIR="$VE_BACKUP_TMP/$HOSTNAME-$TIMESTAMP"
+MYSQL_OPTS="--single-transaction"
+
+
+[ -d "${BACKOUT_DIR}" ] || mkdir -p "${BACKOUT_DIR}"
+
+__mysql_archive() {
+	echo "SHOW DATABASES" | mysql -s |
+	egrep -v "mysql|information_schema|test" |
+	while read PRJ_DB
+	do
+		BACKOUT_ARCH_DB_FILE="${BACKOUT_DIR}/${PRJ_DB}-${TIMESTAMP}.sql.xz"
+		if [ ! -f "${BACKOUT_ARCH_DB_FILE}" ]
+		then
+			echo "Archivating db: ${BACKOUT_ARCH_DB_FILE}"
+			mysqldump ${mysql_opts} ${PRJ_DB} | xz -1 > ${BACKOUT_ARCH_DB_FILE}
+		fi
+	done
+}
+
+__file_struct_archive() {
+
+	cd "$BACKIN_DIR/"
+	ls | while read PRJ_DIR
+	do
+		BACKOUT_ARCH_DIR_FILE="$BACKOUT_DIR/${PRJ_DIR}-${TIMESTAMP}.txz"
+		if [ ! -f "$BACKOUT_ARCH_DIR_FILE" ]
+		then
+			echo "Archivating project: ${PRJ_DIR} to ${BACKOUT_ARCH_DIR_FILE}"
+			cd ${BACKIN_DIR}/${PRJ_DIR}
+			tar Jcf ${BACKOUT_ARCH_DIR_FILE} .
+		fi
+	done
+	
+}
+
+__file_struct_archive
+__mysql_archive
+
